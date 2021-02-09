@@ -1,7 +1,15 @@
-import { Body, Controller, Param, Post, Get, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Get,
+  Delete,
+  Patch,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { Admin } from './admin.entity';
-import { AdminDto } from './dto/admin.dto';
+import { AdminDto } from 'src/shared/dto/admin.dto';
+import { Admin } from 'src/shared/entities/admin.entity';
 
 @Controller('admin')
 export class AdminController {
@@ -25,5 +33,10 @@ export class AdminController {
   @Delete('/:id')
   async delete(@Param('id') id: string): Promise<Admin[]> {
     return this.adminService.delete(id);
+  }
+
+  @Patch('/:id')
+  async update(@Param('id') id: string, @Body() body: any): Promise<any> {
+    return this.adminService.update(id, body);
   }
 }

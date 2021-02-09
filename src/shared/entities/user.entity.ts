@@ -1,14 +1,13 @@
-import { Room } from 'src/room/room.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Role } from './dto/user.dto';
+import { Room } from 'src/shared/entities/room.entity';
+import { Role } from '../dto/user.dto';
 
 @Entity()
 export class User {
@@ -20,6 +19,9 @@ export class User {
 
   @Column({ type: 'varchar', nullable: false })
   password: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  image: string;
 
   @Column({ length: 254, nullable: false, unique: true })
   email: string;

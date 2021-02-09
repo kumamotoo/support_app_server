@@ -6,12 +6,12 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Get()
-  getMessage(): any {
-    return this.messagesService.getMessages();
+  find(): any {
+    return this.messagesService.find();
   }
 
   @Post()
-  createMessage(@Body() message: MessagesI) {
-    return this.messagesService.createMessage(message);
+  create(@Body() message: MessagesI) {
+    return this.messagesService.create(message);
   }
 }

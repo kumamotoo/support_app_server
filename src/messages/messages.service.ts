@@ -1,8 +1,8 @@
-import { Room } from 'src/room/room.entity';
 import { Connection } from 'typeorm';
 import { MessagesRepository } from './messages.repository';
 import { Injectable } from '@nestjs/common';
-import { Messages } from './messages.entity';
+import { Messages } from 'src/shared/entities/messages.entity';
+import { Room } from 'src/shared/entities/room.entity';
 
 export interface MessagesI {
   id?: any;
@@ -21,13 +21,13 @@ export class MessagesService {
     );
   }
 
-  async getMessages(): Promise<Messages[]> {
+  async find(): Promise<Messages[]> {
     return this.messagesRepository.find({
       relations: ['room'],
     });
   }
 
-  async createMessage(message: MessagesI): Promise<Messages> {
+  async create(message: MessagesI): Promise<Messages> {
     const createdMessage = this.messagesRepository.create(message);
     return this.messagesRepository.save(createdMessage);
   }

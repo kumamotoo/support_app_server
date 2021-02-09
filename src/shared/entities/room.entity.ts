@@ -1,26 +1,34 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { Admin } from '../admin/admin.entity';
-import { User } from '../user/user.entity';
-import { Messages } from './../messages/messages.entity';
+import { Admin } from './admin.entity';
+
+import { Messages } from './messages.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Room {
   @PrimaryGeneratedColumn('uuid')
-  id?: number;
+  id?: string;
 
   @Column({ name: 'title' })
   title: string;
 
+  @Column({ name: 'description' })
+  description: string;
+
   @Column({ name: 'open', default: true })
   open: boolean;
+
+  @Column({ name: 'resolved', default: false })
+  resolved: boolean;
 
   @OneToMany(() => Messages, (message) => message.room)
   public messages: Messages[];
@@ -32,4 +40,10 @@ export class Room {
   @ManyToOne(() => Admin, (admin) => admin.room)
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
+
+  @CreateDateColumn({ type: 'timestamp without time zone' })
+  createdAt: string;
+
+  @UpdateDateColumn({ type: 'timestamp without time zone' })
+  updatedAt: string;
 }

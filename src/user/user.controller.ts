@@ -1,14 +1,27 @@
-import { UserDto } from './dto/user.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { UserDto } from 'src/shared/dto/user.dto';
+import { User } from 'src/shared/entities/user.entity';
 import { UserService } from './user.service';
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async findAll(): Promise<User[]> {
+  find(@Req() req?: Request | undefined): Promise<User[]> {
+    if (req?.query.search) {
+      return this.userService.findWithQueries(req?.query);
+    }
     return this.userService.findAll();
   }
 
@@ -25,5 +38,10 @@ export class UserController {
   @Delete('/:id')
   async delete(@Param('id') id: string): Promise<User[]> {
     return this.userService.delete(id);
+  }
+
+  @Patch('/:id')
+  async update(@Param('id') id: string, @Body() body: any): Promise<any> {
+    return this.userService.update(id, body);
   }
 }

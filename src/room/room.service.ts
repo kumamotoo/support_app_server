@@ -1,8 +1,9 @@
-import { RoomDto } from './dto/room.dto';
 import { RoomRepository } from './room.repository';
 import { Injectable } from '@nestjs/common';
-import { Connection } from 'typeorm';
-import { Room } from './room.entity';
+import { Connection, Like } from 'typeorm';
+import { RoomDto } from 'src/shared/dto/room.dto';
+import { Room } from 'src/shared/entities/room.entity';
+import { getQueryValue } from 'src/shared/helpers';
 
 @Injectable()
 export class RoomService {
@@ -12,25 +13,67 @@ export class RoomService {
     this.roomRepository = this.connection.getCustomRepository(RoomRepository);
   }
 
-  async getAllRooms(): Promise<Room[]> {
+  async find(): Promise<Room[]> {
     return this.roomRepository.find({
       relations: ['user', 'admin', 'messages'],
+      order: {
+        createdAt: 'DESC',
+      },
     });
   }
 
-  async createRoom(room: RoomDto): Promise<any> {
+  async findWithQueries(query: any): Promise<Room[]> {
+    let order = {};
+    let where = {};
+
+    if (query.sort) {
+      const { option, value } = getQueryValue(query?.sort);
+      order = {
+        [option]: value,
+      };
+    }
+
+    if (query.search) {
+      const { option, value } = getQueryValue(query?.search);
+      console.log(option, value);
+
+      where = {
+        [option]: Like(`%${value}%`),
+      };
+    }
+
+    return this.roomRepository.find({
+      relations: ['user', 'admin', 'messages'],
+      where,
+      order,
+    });
+  }
+
+  async create(room: RoomDto): Promise<any> {
     const createdRoom = this.roomRepository.create(room);
     return this.roomRepository.save(createdRoom);
   }
 
-  async getRoom(id: string): Promise<Room> {
+  async findOne(id: string): Promise<Room> {
     return this.roomRepository.findOne(id, {
       relations: ['user', 'admin', 'messages'],
     });
   }
 
-  async deleteRoom(id: string) {
+  async findByUser(id: string): Promise<Room[]> {
+    return this.roomRepository.find({
+      where: { user: id },
+      relations: ['user', 'admin'],
+    });
+  }
+
+  async delete(id: string) {
     await this.roomRepository.delete(id);
-    return this.getAllRooms();
+    return this.find();
+  }
+
+  async update(id: string, payload: any): Promise<Room> {
+    await this.roomRepository.update(id, payload);
+    return this.findOne(id);
   }
 }

@@ -1,17 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 
 import { UserController } from './user/user.controller';
+import { MessagesController } from './messages/messages.controller';
 import { AdminService } from './admin/admin.service';
 import { RoomService } from './room/room.service';
 import { UserModule } from './user/user.module';
 import { RoomModule } from './room/room.module';
 import { AdminModule } from './admin/admin.module';
 import { MessagesModule } from './messages/messages.module';
-import { Room } from './room/room.entity';
-import { User } from './user/user.entity';
-import { Admin } from './admin/admin.entity';
-import { Messages } from './messages/messages.entity';
+import { AppGateway } from './shared/app.gateway';
+import { AuthModule } from './auth/auth.module';
+import { UserService } from './user/user.service';
+import { RequestsModule } from './requests/requests.module';
+import { AdminController } from './admin/admin.controller';
 
 const {
   TYPEORM_HOST,
@@ -19,7 +22,7 @@ const {
   TYPEORM_USERNAME,
   TYPEORM_PASSWORD,
   TYPEORM_DATABASE,
-  // TYPEORM_ENTITIES_PATH,
+  TYPEORM_ENTITIES_PATH,
   TYPEORM_CONNECTION,
 } = process.env;
 
@@ -32,8 +35,7 @@ const {
       username: TYPEORM_USERNAME,
       password: TYPEORM_PASSWORD,
       database: TYPEORM_DATABASE,
-      // entities: [join(__dirname, TYPEORM_ENTITIES_PATH)],
-      entities: [Room, User, Admin, Messages],
+      entities: [join(__dirname, TYPEORM_ENTITIES_PATH)],
       synchronize: true,
       logging: ['error'],
     }),
@@ -41,8 +43,18 @@ const {
     RoomModule,
     AdminModule,
     MessagesModule,
+    AuthModule,
+    RequestsModule,
   ],
   controllers: [UserController],
-  providers: [RoomService, AdminService],
+  providers: [
+    RoomService,
+    AdminService,
+    UserService,
+    AppGateway,
+    MessagesController,
+    // UserController,
+    AdminController,
+  ],
 })
 export class AppModule {}
