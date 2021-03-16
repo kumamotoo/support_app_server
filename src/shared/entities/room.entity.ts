@@ -8,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Admin } from './admin.entity';
 
 import { Messages } from './messages.entity';
 import { User } from './user.entity';
@@ -37,9 +36,9 @@ export class Room {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @ManyToOne(() => Admin, (admin) => admin.room)
+  @ManyToOne(() => User, (admin) => admin.room)
   @JoinColumn({ name: 'admin_id' })
-  admin: Admin;
+  admin: User;
 
   @CreateDateColumn({ type: 'timestamp without time zone' })
   createdAt: string;

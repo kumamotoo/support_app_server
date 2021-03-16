@@ -1,5 +1,4 @@
 import { MessagesI } from '../../messages/messages.service';
-import { AdminDto } from './admin.dto';
 import { UserDto } from './user.dto';
 
 export class RoomDto {
@@ -8,6 +7,6 @@ export class RoomDto {
   open: boolean;
   resolved: boolean;
   massages?: Omit<MessagesI, 'id'>;
-  admin: Omit<AdminDto, 'id'>;
+  admin: Omit<UserDto, 'id'>;
   user: Omit<UserDto, 'id'>;
 }

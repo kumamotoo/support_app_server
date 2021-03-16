@@ -4,17 +4,17 @@ import { join } from 'path';
 
 import { UserController } from './user/user.controller';
 import { MessagesController } from './messages/messages.controller';
-import { AdminService } from './admin/admin.service';
-import { RoomService } from './room/room.service';
+
 import { UserModule } from './user/user.module';
 import { RoomModule } from './room/room.module';
-import { AdminModule } from './admin/admin.module';
 import { MessagesModule } from './messages/messages.module';
-import { AppGateway } from './shared/app.gateway';
 import { AuthModule } from './auth/auth.module';
-import { UserService } from './user/user.service';
 import { RequestsModule } from './requests/requests.module';
-import { AdminController } from './admin/admin.controller';
+
+import { RoomService } from './room/room.service';
+import { UserService } from './user/user.service';
+
+import { AppGateway } from './shared/app.gateway';
 
 const {
   TYPEORM_HOST,
@@ -41,20 +41,11 @@ const {
     }),
     UserModule,
     RoomModule,
-    AdminModule,
     MessagesModule,
     AuthModule,
     RequestsModule,
   ],
   controllers: [UserController],
-  providers: [
-    RoomService,
-    AdminService,
-    UserService,
-    AppGateway,
-    MessagesController,
-    // UserController,
-    AdminController,
-  ],
+  providers: [RoomService, UserService, AppGateway, MessagesController],
 })
 export class AppModule {}

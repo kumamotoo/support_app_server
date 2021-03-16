@@ -1,78 +1,65 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AdminDto } from 'src/shared/dto/admin.dto';
-import { Role, UserDto } from 'src/shared/dto/user.dto';
+
+import { UserDto } from 'src/shared/dto/user.dto';
 import { UserService } from 'src/user/user.service';
-import { AdminService } from './../admin/admin.service';
 import { isPasswordMatched } from './../shared/helpers';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
-    private adminService: AdminService,
     private jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
 
   async validate({ email, password }): Promise<any> {
-    let person;
-    person = await this.userService.findOneByEmail(email);
-    if (!person) {
-      person = await this.adminService.findOneByEmail(email);
-    }
+    const user = await this.userService.findOneByEmail(email);
 
-    if (!person) {
+    if (!user) {
       throw new BadRequestException('Wrong credentials.');
     }
 
-    const passwordMatched = await isPasswordMatched(password, person.password);
+    const passwordMatched = await isPasswordMatched(password, user.password);
+    console.log(passwordMatched);
 
-    if (person && passwordMatched) {
+    if (user && passwordMatched) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = person;
+      const { password, ...result } = user;
+
       return result;
     }
     throw new BadRequestException('Wrong credentials.');
   }
 
-  async login(body: UserDto | AdminDto) {
-    const person = await this.validate(body);
+  async login(body: UserDto) {
+    const user = await this.validate(body);
 
-    if (!person) {
+    if (!user) {
       throw new BadRequestException('Wrong credentials.');
     }
 
-    const jwt = { sub: person.id, email: person.email };
+    const jwt = { sub: user.id, email: user.email };
     return {
-      ...person,
+      ...user,
       access_token: this.jwtService.sign(jwt),
     };
   }
 
-  async register(body: UserDto | AdminDto) {
-    let person;
-
-    const alreadyExist =
-      (await this.userService.findOneByEmail(body.email)) ||
-      (await this.adminService.findOneByEmail(body.email));
+  async register(body: UserDto) {
+    const alreadyExist = await this.userService.findOneByEmail(body.email);
 
     if (alreadyExist) {
       return new BadRequestException('User already exist');
     }
 
-    if (body.role && body.role !== Role.USER) {
-      person = await this.adminService.create(body);
-    } else {
-      person = await this.userService.create(body);
-    }
+    const user = await this.userService.create(body);
 
-    const jwt = { sub: person.id, email: person.email };
-    console.log(person);
+    const jwt = { sub: user.id, email: user.email };
 
     return {
-      ...person,
+      ...user,
       access_token: this.jwtService.sign(jwt),
     };
   }

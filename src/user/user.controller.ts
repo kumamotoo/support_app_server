@@ -42,6 +42,6 @@ export class UserController {
 
   @Patch('/:id')
   async update(@Param('id') id: string, @Body() body: any): Promise<any> {
-    return this.userService.update(id, body);
+    return await this.userService.update(id, body);
   }
 }

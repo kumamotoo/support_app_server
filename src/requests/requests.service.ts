@@ -4,7 +4,6 @@ import { Request } from 'src/shared/entities/request.entity';
 import { Connection, Like } from 'typeorm';
 import { RequestRepository } from './request.repository';
 import { RequestDto } from 'src/shared/dto/request.dto';
-import { AdminController } from 'src/admin/admin.controller';
 import { getQueryValue } from 'src/shared/helpers';
 
 @Injectable()
@@ -14,7 +13,6 @@ export class RequestsService {
   constructor(
     private readonly connection: Connection,
     private userController: UserController,
-    private adminController: AdminController,
   ) {
     this.requestRepository = this.connection.getCustomRepository(
       RequestRepository,
@@ -56,7 +54,7 @@ export class RequestsService {
 
   async findOne(id: string): Promise<Request> {
     const info = await this.requestRepository.findOne(id);
-    const creator = await this.findCreator(info.creator);
+    const { id: creator } = await this.findCreator(info.creator);
     return { ...info, creator };
   }
 
@@ -65,12 +63,7 @@ export class RequestsService {
   }
 
   async findCreator(id: string) {
-    let creator: any;
-    creator = await this.userController.findOne(id);
-    if (!creator) {
-      creator = await this.adminController.findOne(id);
-    }
-    return creator;
+    return await this.userController.findOne(id);
   }
 
   async delete(id: string) {

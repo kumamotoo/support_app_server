@@ -10,71 +10,6 @@ export class initialization1612523465328 implements MigrationInterface {
       .then(() =>
         queryRunner.createTable(
           new Table({
-            name: 'admin',
-            columns: [
-              {
-                name: 'id',
-                type: 'uuid',
-                isPrimary: true,
-                isNullable: false,
-                isGenerated: true,
-                generationStrategy: 'uuid',
-                isUnique: true,
-              },
-              {
-                name: 'name',
-                type: 'varchar',
-                isNullable: false,
-                isUnique: true,
-              },
-              {
-                name: 'email',
-                type: 'varchar',
-                isNullable: false,
-                length: '254',
-                isUnique: true,
-              },
-              {
-                name: 'password',
-                type: 'varchar',
-                isNullable: false,
-              },
-              {
-                name: 'role',
-                type: 'varchar',
-                default: "'admin'",
-                enum: [Role.SUPER_ADMIN, Role.ADMIN, Role.USER],
-                isNullable: false,
-              },
-              {
-                name: 'roomId',
-                type: 'uuid',
-                isNullable: false,
-              },
-              {
-                default: 'now()',
-                name: 'createdAt',
-                type: 'timestamp',
-              },
-              {
-                default: 'now()',
-                name: 'updatedAt',
-                type: 'timestamp',
-              },
-            ],
-            foreignKeys: [
-              {
-                columnNames: ['roomId'],
-                referencedColumnNames: ['id'],
-                referencedTableName: 'room',
-              },
-            ],
-          }),
-        ),
-      )
-      .then(() =>
-        queryRunner.createTable(
-          new Table({
             name: 'user',
             columns: [
               {
@@ -157,7 +92,6 @@ export class initialization1612523465328 implements MigrationInterface {
               },
               {
                 name: 'description',
-
                 type: 'string',
                 isNullable: true,
               },
@@ -213,7 +147,7 @@ export class initialization1612523465328 implements MigrationInterface {
               {
                 columnNames: ['adminId'],
                 referencedColumnNames: ['id'],
-                referencedTableName: 'admin',
+                referencedTableName: 'user',
               },
             ],
           }),
@@ -314,5 +248,6 @@ export class initialization1612523465328 implements MigrationInterface {
       );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async down(queryRunner: QueryRunner): Promise<void> {}
 }

@@ -5,7 +5,6 @@ import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
 import { UserService } from 'src/user/user.service';
-import { AdminService } from './../admin/admin.service';
 import { AuthController } from './auth.controller';
 import { ConfigService } from '@nestjs/config';
 
@@ -23,7 +22,6 @@ const { JWT_SECRET_KEY, JWT_EXPIRATION_TIME } = process.env;
     AuthService,
     LocalStrategy,
     UserService,
-    AdminService,
     JwtStrategy,
     ConfigService,
   ],

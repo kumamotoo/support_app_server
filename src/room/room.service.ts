@@ -15,7 +15,7 @@ export class RoomService {
 
   async find(): Promise<Room[]> {
     return this.roomRepository.find({
-      relations: ['user', 'admin', 'messages'],
+      relations: ['user', 'messages'],
       order: {
         createdAt: 'DESC',
       },
@@ -43,7 +43,7 @@ export class RoomService {
     }
 
     return this.roomRepository.find({
-      relations: ['user', 'admin', 'messages'],
+      relations: ['user', 'messages'],
       where,
       order,
     });
@@ -56,14 +56,14 @@ export class RoomService {
 
   async findOne(id: string): Promise<Room> {
     return this.roomRepository.findOne(id, {
-      relations: ['user', 'admin', 'messages'],
+      relations: ['user', 'messages'],
     });
   }
 
   async findByUser(id: string): Promise<Room[]> {
     return this.roomRepository.find({
       where: { user: id },
-      relations: ['user', 'admin'],
+      relations: ['user'],
     });
   }
 
